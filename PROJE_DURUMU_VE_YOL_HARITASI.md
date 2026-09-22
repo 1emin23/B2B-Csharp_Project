@@ -107,17 +107,16 @@ Aşağıdaki adımlar, case'in doğasına uygun şekilde; gereksiz süslemelerde
   - `Views/Shared/_Layout.cshtml` modern B2B düzenine kavuşturuldu (Dinamik Auth dropdown, sepet rozeti, Bootstrap Icons, SweetAlert2).
 
 
-### 📌 ADIM 2: B2B Dinamik Ürün Grid Ekranı & Hızlı Sipariş (Bayi Kataloğu)
-- **Yapılacaklar:**
-  - `ProductController.cs` oluşturulacak:
-    - `Index(string? search)`: `ProductService.GetGridColumnsAsync` ile kolon ayarlarını ve `GetProductGridAsync(search)` ile filtrelenmiş ürün listesini View'a taşıyacak.
-    - `Detail(int id)`: Modal içinde gösterilmek üzere JSON veya PartialView dönecek.
-  - `Views/Product/Index.cshtml` tasarlanacak:
-    - Üstte arama inputu (Enter'a basıldığında veya 'Ara' dendiğinde SQL LIKE sorgusu çalışacak).
-    - `GridColumnDefinitions` tablosuna sadık kalarak dinamik başlıklar (`OrderIndex` sırasına göre).
-    - Her ürün satırında: Görsel, Ürün Kodu, Ürün Adı, Marka, Renkli Stok Rozeti (Var/Kritik/Yok), Fiyat, Miktar Giriş Kutusu + "Sepete Ekle" butonu, Detay butonu.
-    - Stokta olmayan ürünlerde adet kutusu ve ekle butonu `disabled` olacak.
-  - Sayfa içine Bootstrap Modal eklenecek: "Detay" tıklandığında sayfa yenilenmeden ürünün üretici kodu, özel kodları, açıklaması ve kategorisi modalda gösterilecek.
+### ✅ ADIM 2: B2B Dinamik Ürün Grid Ekranı & Hızlı Sipariş (Bayi Kataloğu) - [TAMAMLANDI]
+- **Yapılanlar:**
+  - `ProductIndexViewModel.cs` ve `ProductController.cs` oluşturuldu (`Index` ve `Detail` aksiyonları).
+  - `Views/Product/Index.cshtml` geliştirildi:
+    - SQL seviyesinde IQueryable arama formu (`search` parametresiyle tüm metinsel alanlarda LIKE filtreleme).
+    - `GridColumnDefinitions` tablosuna bağlı dinamik kolon render motoru (OrderIndex, genişlik, hizalama, responsive görünürlük).
+    - Ürün bazlı kritik stok eşiğine göre dinamik rozetler (`Var`, `Kritik`, `Yok`).
+    - Tablo üzerinden anında adet girip sepete ekleme input & buton grubu (Stokta olmayanlarda otomatik deaktif).
+    - Bootstrap 5 Detay Popup Modalı (Ürün kodu, marka, üretici kodu, özel kodlar, kategori ve açıklamayı sayfa yenilemeden Fetch ile getirme).
+
 
 ### 📌 ADIM 3: AJAX Sepet Yönetimi & Navbar Bildirimi
 - **Yapılacaklar:**

@@ -1,0 +1,392 @@
+@model C1Soft.WebUI.Models.ProductIndexViewModel
+@using C1Soft.Domain.Enums
+@{
+    ViewData["Title"] = "B2B Ürün Kataloğu";
+}
+
+<!-- Başlık ve Filtreleme Alanı -->
+<div class="row align-items-center mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <h2 class="fw-bold mb-1 text-dark">
+            <i class="bi bi-grid-3x3-gap text-primary me-2"></i>B2B Ürün Kataloğu
+        </h2>
+        <p class="text-muted mb-0 small">
+            Dinamik kolon tanımlarına sahip hızlı sipariş tablosu.
+            <span class="badge bg-secondary ms-1">@Model.Products.Count ürün</span>
+        </p>
+    </div>
+
+    <!-- SQL Düzeyinde Metinsel Arama Formu (Madde 3.4 & 12) -->
+    <div class="col-md-6">
+        <form method="get" asp-action="Index" class="d-flex gap-2">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="search" value="@Model.SearchQuery" 
+                       class="form-control border-start-0 ps-0" 
+                       placeholder="Ürün adı, kod, marka, üretici kodu veya özel kod ara..." />
+                <button type="submit" class="btn btn-primary px-3">
+                    <i class="bi bi-funnel me-1"></i>Ara
+                </button>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.SearchQuery))
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center" title="Aramayı Temizle">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.SearchQuery))
+{
+    <div class="alert alert-info py-2 small d-flex justify-content-between align-items-center shadow-sm">
+        <div>
+            <i class="bi bi-info-circle me-1"></i>
+            <strong>"@Model.SearchQuery"</strong> araması için <strong>@Model.Products.Count</strong> ürün bulundu.
+        </div>
+        <a asp-action="Index" class="text-decoration-none small text-dark fw-bold">Tüm Ürünleri Göster</a>
+    </div>
+}
+
+<!-- B2B Dinamik Grid Tablosu (Madde 6.1) -->
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    @foreach (var col in Model.Columns.OrderBy(c => c.OrderIndex))
+                    {
+                        var alignClass = col.Alignment switch
+                        {
+                            "center" => "text-center",
+                            "right" => "text-end",
+                            _ => "text-start"
+                        };
+
+                        var respClass = "";
+                        if (!col.IsVisibleMobile && col.IsVisibleTablet) respClass = "d-none d-md-table-cell";
+                        else if (!col.IsVisibleMobile && !col.IsVisibleTablet && col.IsVisibleDesktop) respClass = "d-none d-lg-table-cell";
+
+                        <th class="@alignClass @respClass" style="@(!string.IsNullOrEmpty(col.Width) ? $"width: {col.Width};" : "")">
+                            @col.HeaderName
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Products.Any())
+                {
+                    <tr>
+                        <td colspan="@Model.Columns.Count" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Kriterlere uygun ürün bulunamadı.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model.Products)
+                    {
+                        <tr>
+                            @foreach (var col in Model.Columns.OrderBy(c => c.OrderIndex))
+                            {
+                                var alignClass = col.Alignment switch
+                                {
+                                    "center" => "text-center",
+                                    "right" => "text-end",
+                                    _ => "text-start"
+                                };
+
+                                var respClass = "";
+                                if (!col.IsVisibleMobile && col.IsVisibleTablet) respClass = "d-none d-md-table-cell";
+                                else if (!col.IsVisibleMobile && !col.IsVisibleTablet && col.IsVisibleDesktop) respClass = "d-none d-lg-table-cell";
+
+                                <td class="@alignClass @respClass">
+                                    @switch (col.RenderType)
+                                    {
+                                        case GridRenderType.Image:
+                                            <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://placehold.co/60x60?text=No+Img" : p.ImageUrl)"
+                                                 class="img-thumbnail rounded"
+                                                 style="width: 50px; height: 50px; object-fit: contain;"
+                                                 alt="@p.ProductName"
+                                                 onerror="this.src='https://placehold.co/60x60?text=No+Img';" />
+                                            break;
+
+                                        case GridRenderType.Text:
+                                            if (col.FieldName == "ProductCode")
+                                            {
+                                                <code class="fw-bold text-dark">@p.ProductCode</code>
+                                            }
+                                            else if (col.FieldName == "ProductName")
+                                            {
+                                                <div class="fw-semibold text-dark">@p.ProductName</div>
+                                            }
+                                            else if (col.FieldName == "Brand")
+                                            {
+                                                <span class="badge bg-light text-dark border">@p.Brand</span>
+                                            }
+                                            break;
+
+                                        case GridRenderType.StockBadge:
+                                            @* Madde 3.1: Ürün bazlı dinamik kritik stok eşiği kuralı *@
+                                            @if (p.StockStatusBadge == StockStatus.InStock)
+                                            {
+                                                <span class="badge bg-success px-2 py-1">
+                                                    <i class="bi bi-check-circle me-1"></i>Var (@p.StockQuantity)
+                                                </span>
+                                            }
+                                            else if (p.StockStatusBadge == StockStatus.Critical)
+                                            {
+                                                <span class="badge bg-warning text-dark px-2 py-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>Kritik (@p.StockQuantity)
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger px-2 py-1">
+                                                    <i class="bi bi-x-circle me-1"></i>Yok (0)
+                                                </span>
+                                            }
+                                            break;
+
+                                        case GridRenderType.Price:
+                                            <span class="fw-bold text-primary fs-6">
+                                                @p.Price.ToString("N2") ₺
+                                            </span>
+                                            break;
+
+                                        case GridRenderType.QuantityInputWithCart:
+                                            @* Madde 3.2: Doğrudan Tablodan Hızlı Sipariş Girişi *@
+                                            @if (p.StockQuantity > 0)
+                                            {
+                                                <div class="input-group input-group-sm justify-content-center" style="max-width: 140px; margin: 0 auto;">
+                                                    <input type="number" id="qty-@p.Id" class="form-control text-center" 
+                                                           value="1" min="1" max="@p.StockQuantity" />
+                                                    <button class="btn btn-primary" onclick="quickAddToCart(@p.Id, 'qty-@p.Id')" title="Sepete Ekle">
+                                                        <i class="bi bi-cart-plus"></i> Ekle
+                                                    </button>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-secondary" disabled>
+                                                    <i class="bi bi-dash-circle me-1"></i>Tükendi
+                                                </button>
+                                            }
+                                            break;
+
+                                        case GridRenderType.ActionModal:
+                                            @* Madde 3.3: Ürün Detay Popup (Modal) *@
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="openProductDetail(@p.Id)" title="Detay">
+                                                <i class="bi bi-eye"></i> Detay
+                                            </button>
+                                            break;
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ÜRÜN DETAY MODAL (Madde 3.3) -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow border-0">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title fw-bold" id="productDetailModalLabel">
+                    <i class="bi bi-box-seam me-2"></i>Ürün Detayı
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-4" id="modalContent">
+                <div class="text-center py-4" id="modalLoading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2 mb-0">Yükleniyor...</p>
+                </div>
+                <div id="modalData" style="display: none;">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-5 text-center">
+                            <img id="detailImg" src="" class="img-fluid rounded border p-2" 
+                                 style="max-height: 220px; object-fit: contain;" alt="" />
+                            <div class="mt-3">
+                                <span id="detailStockBadge" class="badge px-3 py-2 fs-6"></span>
+                            </div>
+                            <div class="mt-2">
+                                <span class="fs-4 fw-bold text-primary" id="detailPrice"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h4 class="fw-bold text-dark mb-1" id="detailName"></h4>
+                            <div class="mb-3">
+                                <span class="badge bg-secondary me-1" id="detailCategory"></span>
+                                <span class="badge bg-light text-dark border" id="detailBrand"></span>
+                            </div>
+                            
+                            <table class="table table-sm table-bordered small mb-3">
+                                <tbody>
+                                    <tr>
+                                        <th class="bg-light w-40">Ürün Kodu:</th>
+                                        <td id="detailCode" class="fw-bold"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Üretici Kodu:</th>
+                                        <td id="detailMfrCode"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Özel Kod 1:</th>
+                                        <td id="detailCustom1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Özel Kod 2:</th>
+                                        <td id="detailCustom2"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Mevcut Stok:</th>
+                                        <td id="detailStockQty"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Kritik Stok Eşiği:</th>
+                                        <td id="detailThreshold"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <p class="text-muted small mb-0" id="detailDesc"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const detailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+
+        // Ürün Detay Popup (Madde 3.3)
+        function openProductDetail(id) {
+            document.getElementById('modalLoading').style.display = 'block';
+            document.getElementById('modalData').style.display = 'none';
+            detailModal.show();
+
+            fetch(`/Product/Detail?id=${id}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Ürün bilgisi yüklenemedi.');
+                    return res.json();
+                })
+                .then(p => {
+                    document.getElementById('detailImg').src = p.imageUrl || 'https://placehold.co/220x220?text=No+Img';
+                    document.getElementById('detailImg').onerror = function() {
+                        this.src = 'https://placehold.co/220x220?text=No+Img';
+                    };
+                    document.getElementById('detailName').textContent = p.productName;
+                    document.getElementById('detailCode').textContent = p.productCode;
+                    document.getElementById('detailBrand').textContent = p.brand;
+                    document.getElementById('detailCategory').textContent = p.categoryName || 'Genel';
+                    document.getElementById('detailMfrCode').textContent = p.manufacturerCode || '-';
+                    document.getElementById('detailCustom1').textContent = p.customCode1 || '-';
+                    document.getElementById('detailCustom2').textContent = p.customCode2 || '-';
+                    document.getElementById('detailStockQty').textContent = p.stockQuantity + ' Adet';
+                    document.getElementById('detailThreshold').textContent = p.criticalStockThreshold + ' Adet';
+                    document.getElementById('detailPrice').textContent = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(p.price);
+                    document.getElementById('detailDesc').textContent = p.description || 'Bu ürün için detaylı açıklama girilmemiştir.';
+
+                    const badge = document.getElementById('detailStockBadge');
+                    if (p.stockQuantity <= 0) {
+                        badge.className = 'badge bg-danger px-3 py-2 fs-6';
+                        badge.textContent = 'Stokta Yok';
+                    } else if (p.stockQuantity <= p.criticalStockThreshold) {
+                        badge.className = 'badge bg-warning text-dark px-3 py-2 fs-6';
+                        badge.textContent = `Kritik Stok (${p.stockQuantity} Adet)`;
+                    } else {
+                        badge.className = 'badge bg-success px-3 py-2 fs-6';
+                        badge.textContent = `Stokta Var (${p.stockQuantity} Adet)`;
+                    }
+
+                    document.getElementById('modalLoading').style.display = 'none';
+                    document.getElementById('modalData').style.display = 'block';
+                })
+                .catch(err => {
+                    document.getElementById('modalLoading').innerHTML = `<div class="text-danger">${err.message}</div>`;
+                });
+        }
+
+        // Doğrudan Tablodan Hızlı Sipariş Girişi (Madde 3.2)
+        function quickAddToCart(productId, inputId) {
+            const input = document.getElementById(inputId);
+            const quantity = parseInt(input.value, 10);
+
+            if (isNaN(quantity) || quantity <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geçersiz Adet',
+                    text: 'Lütfen en az 1 adet giriniz.',
+                    confirmButtonText: 'Tamam'
+                });
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('productId', productId);
+            formData.append('quantity', quantity);
+
+            fetch('/Cart/AddToCart', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    window.location.href = '/Auth/Login?returnUrl=/Product/Index';
+                    return;
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+
+                if (data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message || 'Ürün sepete eklendi!',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+
+                    // Navbar sepet sayısını güncelle
+                    if (typeof refreshCartBadge === 'function') {
+                        refreshCartBadge();
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sepete Eklenemedi',
+                        text: data.message || 'Bir hata oluştu.',
+                        confirmButtonText: 'Tamam'
+                    });
+                }
+            })
+            .catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: 'İşlem sırasında bir hata oluştu.',
+                    confirmButtonText: 'Tamam'
+                });
+            });
+        }
+    </script>
+}
