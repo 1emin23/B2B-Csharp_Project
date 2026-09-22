@@ -85,7 +85,8 @@ public class ProductService : IProductService
                 StockQuantity = p.StockQuantity,
                 CriticalStockThreshold = p.CriticalStockThreshold,
                 Price = p.Price,
-                CategoryName = p.Category != null ? p.Category.Name : null
+                CategoryName = p.Category != null ? p.Category.Name : null,
+                IsActive = p.IsActive
             })
             .FirstOrDefaultAsync();
     }
@@ -125,7 +126,8 @@ public class ProductService : IProductService
                 StockQuantity = p.StockQuantity,
                 CriticalStockThreshold = p.CriticalStockThreshold,
                 Price = p.Price,
-                CategoryName = p.Category != null ? p.Category.Name : null
+                CategoryName = p.Category != null ? p.Category.Name : null,
+                IsActive = p.IsActive
             })
             .ToListAsync();
     }

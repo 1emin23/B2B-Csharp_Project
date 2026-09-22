@@ -1,0 +1,152 @@
+@model C1Soft.Business.DTOs.Order.OrderDetailDto
+@using C1Soft.Domain.Enums
+@{
+    ViewData["Title"] = $"Sipariş Yönetimi - {Model.OrderNumber}";
+}
+
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-shield-check text-warning me-2"></i>Sipariş Detayı & Onay Masası
+        </h2>
+        <p class="text-muted small mb-0">
+            Sipariş No: <code class="fw-bold text-dark fs-6">@Model.OrderNumber</code>
+            <span class="ms-3">Bayi: <strong>@Model.CustomerFullName (@Model.CustomerEmail)</strong></span>
+        </p>
+    </div>
+    <div class="col-md-4 text-md-end mt-2 mt-md-0">
+        <a asp-action="Orders" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Sipariş Listesine Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="row g-4 mb-4">
+    <!-- Sipariş Durum Güncelleme Formu (Madde 3 & 10) -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-dark text-white py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-gear-fill me-2"></i>Durum ve Not Güncelle</h6>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="UpdateOrderStatus" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Sipariş Durumu</label>
+                        <select name="status" class="form-select">
+                            <option value="@OrderStatus.Pending" selected="@(Model.Status == OrderStatus.Pending)">Beklemede (İncelemede)</option>
+                            <option value="@OrderStatus.Approved" selected="@(Model.Status == OrderStatus.Approved)">Onaylandı (Hazırlanıyor)</option>
+                            <option value="@OrderStatus.Rejected" selected="@(Model.Status == OrderStatus.Rejected)">Reddedildi</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Yönetici Açıklama Notu</label>
+                        <textarea name="adminNote" rows="4" class="form-control" 
+                                  placeholder="Bayiye iletilecek açıklama, kargo takip veya red gerekçesi...">@Model.AdminNote</textarea>
+                        <small class="text-muted">Bu açıklama bayinin 'Sipariş Detayı' ekranında anında görünür.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold">
+                        <i class="bi bi-save me-1"></i>Durumu ve Notu Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutar ve Özet Kartı -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-light py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Sipariş Bilgileri</h6>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Sipariş Tarihi:</span>
+                        <strong>@Model.OrderDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Mevcut Durum:</span>
+                        @switch (Model.Status)
+                        {
+                            case OrderStatus.Pending:
+                                <span class="badge bg-warning text-dark px-3 py-1">Beklemede</span>
+                                break;
+                            case OrderStatus.Approved:
+                                <span class="badge bg-success px-3 py-1">Onaylandı</span>
+                                break;
+                            case OrderStatus.Rejected:
+                                <span class="badge bg-danger px-3 py-1">Reddedildi</span>
+                                break;
+                        }
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Bayi Adı:</span>
+                        <strong>@Model.CustomerFullName</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Bayi E-Posta:</span>
+                        <code>@Model.CustomerEmail</code>
+                    </div>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fs-5 fw-bold text-dark">Genel Toplam:</span>
+                    <span class="fs-3 fw-bold text-primary">@Model.TotalAmount.ToString("N2") ₺</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Snapshot Kalem Listesi -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Sipariş Kalemleri (Snapshot Veriler)</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Ürün Kodu (Snapshot)</th>
+                    <th>Ürün Adı (Snapshot)</th>
+                    <th class="text-end">Birim Fiyat</th>
+                    <th class="text-center">Adet</th>
+                    <th class="text-end">Tutar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td><code>@item.ProductCode</code></td>
+                        <td class="fw-semibold">@item.ProductName</td>
+                        <td class="text-end">@item.UnitPrice.ToString("N2") ₺</td>
+                        <td class="text-center">@item.Quantity Adet</td>
+                        <td class="text-end fw-bold text-primary">@item.TotalPrice.ToString("N2") ₺</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -135,19 +135,14 @@ Aşağıdaki adımlar, case'in doğasına uygun şekilde; gereksiz süslemelerde
   - `Views/Order/Detail.cshtml` oluşturuldu (Sipariş anında dondurulan birim fiyat, ürün kodu ve adı gösteren snapshot faturası ve yönetici açıklama notu alanı).
 
 
-### 📌 ADIM 5: Yönetim (Admin) Paneli
-- **Yapılacaklar:**
-  - `[Authorize(Roles = "Admin")]` özniteliği ile korunan Admin controller'ları yazılacak:
-    - `AdminOrderController.cs`:
-      - Tüm siparişleri listeleme (`GetAllOrdersAsync`).
-      - Sipariş durumunu değiştirme (`Approved` / `Rejected`) ve yönetici açıklaması (`AdminNote`) girip kaydetme.
-    - `AdminProductController.cs`:
-      - Ürün listesi (aktif/pasif ayrımıyla).
-      - Yeni ürün ekleme ve düzenleme formu (FluentValidation ile korunan).
-      - Ürün silme (Soft-delete: `IsActive = false`).
-  - Admin için sade Bootstrap tabloları ve modal/form sayfaları hazırlanacak.
+### ✅ ADIM 5: Yönetim (Admin) Paneli - [TAMAMLANDI]
+- **Yapılanlar:**
+  - `[Authorize(Roles = "Admin")]` özniteliği ile korunan `AdminController.cs` yazıldı.
+  - **Sipariş Yönetimi:** Tüm siparişleri listeleme (`Orders.cshtml`), detay görme ve durum güncelleme (`OrderDetail.cshtml` - `Approved`/`Rejected` durumları ve `AdminNote` yönetici açıklaması).
+  - **Ürün Yönetimi:** Pasifler dahil tüm ürünleri arama ve listeleme (`Products.cshtml`), yeni ürün oluşturma (`ProductCreate.cshtml` - resim yükleme ve kategori seçimi dahil), ürün düzenleme (`ProductEdit.cshtml`), soft-delete (`ProductDelete`).
+  - **Kullanıcı & Bayi Yönetimi:** Kullanıcıları arama ve listeleme (`Users.cshtml`), kullanıcı bilgisi/rol/aktiflik ve şifre güncelleme (`UserEdit.cshtml`).
 
-### 📌 ADIM 6: Test, Doğrulama ve Teslimat Belgeleri (README.md)
+### 📌 ADIM 6: Test, Doğrulama ve Teslimat Belgeleri (README.md) - [ŞU ANKİ ADIM]
 - **Yapılacaklar:**
   - Tüm akışlar uçtan uca test edilecek:
     - Giriş yapma (Admin ve Bayi)

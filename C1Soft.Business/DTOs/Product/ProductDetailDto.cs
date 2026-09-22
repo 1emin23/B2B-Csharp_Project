@@ -20,6 +20,7 @@ public class ProductDetailDto
     public int CriticalStockThreshold { get; set; }
     public decimal Price { get; set; }
     public string? CategoryName { get; set; }
+    public bool IsActive { get; set; } = true;
     public StockStatus StockStatus
     {
         get

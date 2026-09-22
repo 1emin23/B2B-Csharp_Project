@@ -58,11 +58,11 @@ public class AuthController : Controller
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
-        // Rol kontrolü: Admin ise doğrudan Admin paneline, Bayi ise ürünler kataloğuna
+        // Rol kontrolü: Admin ise doğrudan Admin paneline, Bayi ise Ana Sayfaya (Slider/Banner - Madde 4.1 & 5)
         if (principal.IsInRole("Admin"))
             return RedirectToAction("Orders", "Admin");
 
-        return RedirectToAction("Index", "Product");
+        return RedirectToAction("Index", "Home");
     }
 
     // ── YENİ BAYİ KAYIT (REGISTER) ──────────────────────────────────────────────

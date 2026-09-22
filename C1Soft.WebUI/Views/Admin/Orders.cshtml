@@ -1,0 +1,103 @@
+@model List<C1Soft.Business.DTOs.Order.OrderSummaryDto>
+@using C1Soft.Domain.Enums
+@{
+    ViewData["Title"] = "Admin - Sipariş Yönetimi";
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-receipt text-warning me-2"></i>B2B Sipariş Yönetimi
+        </h2>
+        <p class="text-muted small mb-0">
+            Tüm bayilerden gelen siparişler. Durumlarını onaylayabilir, reddedebilir ve yönetici notu ekleyebilirsiniz.
+        </p>
+    </div>
+    <div class="col-md-4 text-md-end mt-2 mt-md-0">
+        <span class="badge bg-secondary fs-6">Toplam @Model.Count Sipariş</span>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Bayi Bilgisi</th>
+                    <th>Tarih</th>
+                    <th class="text-end">Tutar</th>
+                    <th class="text-center">Durum</th>
+                    <th class="text-center" style="width: 140px;">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Henüz kayıtlı bir sipariş bulunmuyor.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>
+                                <code class="fw-bold text-dark fs-6">@o.OrderNumber</code>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@(o.CustomerFullName ?? o.CustomerUsername)</div>
+                                <small class="text-muted">Kullanıcı: @o.CustomerUsername</small>
+                            </td>
+                            <td>
+                                <div>@o.OrderDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                            </td>
+                            <td class="text-end fw-bold text-primary fs-6">
+                                @o.TotalAmount.ToString("N2") ₺
+                            </td>
+                            <td class="text-center">
+                                @switch (o.Status)
+                                {
+                                    case OrderStatus.Pending:
+                                        <span class="badge bg-warning text-dark px-3 py-2">
+                                            <i class="bi bi-clock me-1"></i>Beklemede
+                                        </span>
+                                        break;
+
+                                    case OrderStatus.Approved:
+                                        <span class="badge bg-success px-3 py-2">
+                                            <i class="bi bi-check-circle me-1"></i>Onaylandı
+                                        </span>
+                                        break;
+
+                                    case OrderStatus.Rejected:
+                                        <span class="badge bg-danger px-3 py-2">
+                                            <i class="bi bi-x-circle me-1"></i>Reddedildi
+                                        </span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="OrderDetail" asp-route-id="@o.Id" class="btn btn-primary btn-sm px-3">
+                                    <i class="bi bi-pencil-square me-1"></i>Yönet
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

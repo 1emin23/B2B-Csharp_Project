@@ -1,0 +1,120 @@
+@model C1Soft.Business.DTOs.Product.ProductCreateDto
+@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+    var categories = ViewBag.Categories as List<C1Soft.Domain.Entities.Category> ?? new();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i>Yeni Ürün Ekle</h5>
+                <a asp-action="Products" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Listeye Dön
+                </a>
+            </div>
+            <div class="card-body p-4">
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="ProductCreate" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ProductCode" class="form-label fw-semibold">Ürün Kodu *</label>
+                            <input asp-for="ProductCode" class="form-control" placeholder="Örn: HRD-5001" autofocus />
+                            <span asp-validation-for="ProductCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-8">
+                            <label asp-for="ProductName" class="form-label fw-semibold">Ürün Adı *</label>
+                            <input asp-for="ProductName" class="form-control" placeholder="Örn: Bosch Darbeli Matkap 18V" />
+                            <span asp-validation-for="ProductName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Brand" class="form-label fw-semibold">Marka *</label>
+                            <input asp-for="Brand" class="form-control" placeholder="Örn: Bosch, Siemens, Schneider" />
+                            <span asp-validation-for="Brand" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CategoryId" class="form-label fw-semibold">Kategori *</label>
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">Kategori Seçiniz</option>
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Price" class="form-label fw-semibold">Birim Fiyat (₺) *</label>
+                            <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="StockQuantity" class="form-label fw-semibold">Stok Miktarı *</label>
+                            <input asp-for="StockQuantity" type="number" class="form-control" placeholder="0" />
+                            <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CriticalStockThreshold" class="form-label fw-semibold">Kritik Stok Eşiği *</label>
+                            <input asp-for="CriticalStockThreshold" type="number" class="form-control" value="10" />
+                            <span asp-validation-for="CriticalStockThreshold" class="text-danger small"></span>
+                            <small class="text-muted">Bu sayının altına düşünce sarı 'Kritik' rozeti yanar.</small>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ManufacturerCode" class="form-label fw-semibold">Üretici Kodu</label>
+                            <input asp-for="ManufacturerCode" class="form-control" placeholder="OEM Kodu" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CustomCode1" class="form-label fw-semibold">Özel Kod 1</label>
+                            <input asp-for="CustomCode1" class="form-control" placeholder="Dahili Kod 1" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CustomCode2" class="form-label fw-semibold">Özel Kod 2</label>
+                            <input asp-for="CustomCode2" class="form-control" placeholder="Dahili Kod 2" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ürün Görseli</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                        <small class="text-muted">Seçilmezse varsayılan görsel atanır.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold">Açıklama</label>
+                        <textarea asp-for="Description" rows="3" class="form-control" placeholder="Ürün teknik özellikleri ve açıklaması..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                        <i class="bi bi-check-circle me-1"></i>Ürünü Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

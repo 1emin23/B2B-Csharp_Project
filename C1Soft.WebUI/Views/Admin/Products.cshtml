@@ -1,0 +1,134 @@
+@model List<C1Soft.Business.DTOs.Product.ProductDetailDto>
+@{
+    ViewData["Title"] = "Admin - Ürün Yönetimi";
+    var search = ViewBag.SearchQuery as string;
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-box-seam text-warning me-2"></i>B2B Ürün Yönetimi
+        </h2>
+        <p class="text-muted small mb-0">
+            Katalogdaki tüm aktif ve pasif ürünleri listeleyebilir, yeni ürün ekleyebilir veya düzenleyebilirsiniz.
+        </p>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <a asp-action="ProductCreate" class="btn btn-success px-3 shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i>Yeni Ürün Ekle
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<!-- Arama Çubuğu -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="get" asp-action="Products" class="d-flex gap-2">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="search" value="@search" class="form-control border-start-0 ps-0"
+                       placeholder="Ürün adı, kodu veya marka ara..." />
+                <button type="submit" class="btn btn-primary px-4">Ara</button>
+            </div>
+            @if (!string.IsNullOrEmpty(search))
+            {
+                <a asp-action="Products" class="btn btn-outline-secondary d-flex align-items-center">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </form>
+    </div>
+</div>
+
+<!-- Ürün Tablosu -->
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 70px;">Görsel</th>
+                    <th>Ürün Kodu</th>
+                    <th>Ürün Adı</th>
+                    <th>Marka</th>
+                    <th>Kategori</th>
+                    <th class="text-center">Stok / Eşik</th>
+                    <th class="text-end">Fiyat</th>
+                    <th class="text-center" style="width: 160px;">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Kriterlere uygun ürün bulunamadı.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://placehold.co/50x50?text=No+Img" : p.ImageUrl)"
+                                     class="img-thumbnail rounded"
+                                     style="width: 50px; height: 50px; object-fit: contain;"
+                                     alt="@p.ProductName"
+                                     onerror="this.src='https://placehold.co/50x50?text=No+Img';" />
+                            </td>
+                            <td><code class="fw-bold text-dark">@p.ProductCode</code></td>
+                            <td>
+                                <div class="fw-semibold text-dark">
+                                    @p.ProductName
+                                    @if (!p.IsActive)
+                                    {
+                                        <span class="badge bg-secondary ms-1">Pasif</span>
+                                    }
+                                </div>
+                                <small class="text-muted">Üretici Kod: @(p.ManufacturerCode ?? "-")</small>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@p.Brand</span></td>
+                            <td><span class="badge bg-secondary">@(p.CategoryName ?? "-")</span></td>
+                            <td class="text-center">
+                                <span class="fw-bold">@p.StockQuantity</span> / <span class="text-muted small">@p.CriticalStockThreshold</span>
+                            </td>
+                            <td class="text-end fw-bold text-primary">@p.Price.ToString("N2") ₺</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="ProductEdit" asp-route-id="@p.Id" class="btn btn-outline-primary" title="Düzenle">
+                                        <i class="bi bi-pencil"></i> Düzenle
+                                    </a>
+                                    <form asp-action="ProductDelete" asp-route-id="@p.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bu ürünü pasife almak (soft-delete) istediğinizden emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger" title="Pasife Al">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

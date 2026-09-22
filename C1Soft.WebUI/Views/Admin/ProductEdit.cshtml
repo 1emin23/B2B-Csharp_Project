@@ -1,0 +1,131 @@
+@model C1Soft.Business.DTOs.Product.ProductEditDto
+@{
+    ViewData["Title"] = $"Ürün Düzenle - {Model.ProductName}";
+    var categories = ViewBag.Categories as List<C1Soft.Domain.Entities.Category> ?? new();
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Ürün Düzenle</h5>
+                <a asp-action="Products" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Listeye Dön
+                </a>
+            </div>
+            <div class="card-body p-4">
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="ProductEdit" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ExistingImageUrl" />
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ProductCode" class="form-label fw-semibold">Ürün Kodu *</label>
+                            <input asp-for="ProductCode" class="form-control" />
+                            <span asp-validation-for="ProductCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-8">
+                            <label asp-for="ProductName" class="form-label fw-semibold">Ürün Adı *</label>
+                            <input asp-for="ProductName" class="form-control" />
+                            <span asp-validation-for="ProductName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Brand" class="form-label fw-semibold">Marka *</label>
+                            <input asp-for="Brand" class="form-control" />
+                            <span asp-validation-for="Brand" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CategoryId" class="form-label fw-semibold">Kategori *</label>
+                            <select asp-for="CategoryId" class="form-select">
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat.Id" selected="@(cat.Id == Model.CategoryId)">@cat.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="Price" class="form-label fw-semibold">Birim Fiyat (₺) *</label>
+                            <input asp-for="Price" type="number" step="0.01" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="StockQuantity" class="form-label fw-semibold">Stok Miktarı *</label>
+                            <input asp-for="StockQuantity" type="number" class="form-control" />
+                            <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CriticalStockThreshold" class="form-label fw-semibold">Kritik Stok Eşiği *</label>
+                            <input asp-for="CriticalStockThreshold" type="number" class="form-control" />
+                            <span asp-validation-for="CriticalStockThreshold" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="ManufacturerCode" class="form-label fw-semibold">Üretici Kodu</label>
+                            <input asp-for="ManufacturerCode" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CustomCode1" class="form-label fw-semibold">Özel Kod 1</label>
+                            <input asp-for="CustomCode1" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="CustomCode2" class="form-label fw-semibold">Özel Kod 2</label>
+                            <input asp-for="CustomCode2" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3 align-items-center">
+                        <div class="col-md-2 text-center">
+                            <img src="@(string.IsNullOrEmpty(Model.ExistingImageUrl) ? "https://placehold.co/70x70?text=No+Img" : Model.ExistingImageUrl)" 
+                                 class="img-thumbnail rounded" style="width: 70px; height: 70px; object-fit: contain;" alt="" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Yeni Görsel Yükle (İsteğe Bağlı)</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch mt-4">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="IsActive" class="form-check-label fw-semibold">Ürün Satışta (Aktif)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold">Açıklama</label>
+                        <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                        <i class="bi bi-save me-1"></i>Değişiklikleri Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

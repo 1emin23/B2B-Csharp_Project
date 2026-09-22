@@ -34,6 +34,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Auth/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            // AJAX / Fetch veya JSON isteklerinde 302 HTML Login yerine 401 Unauthorized dön
+            if (context.Request.Headers.XRequestedWith == "XMLHttpRequest" ||
+                context.Request.Headers.Accept.ToString().Contains("application/json") ||
+                context.Request.Path.StartsWithSegments("/Cart"))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            if (context.Request.Headers.XRequestedWith == "XMLHttpRequest" ||
+                context.Request.Headers.Accept.ToString().Contains("application/json"))
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
     });
 
 // 4. MVC Controller ve View Servisleri + FluentValidation entegrasyonu
