@@ -1,0 +1,13 @@
+## .NET Core & Visual Studio gitignore
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+appsettings.Development.json
+*.log
+_ReSharper*/
+*.DotSettings.user

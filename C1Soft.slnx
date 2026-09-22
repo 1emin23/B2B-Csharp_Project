@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="C1Soft.Business/C1Soft.Business.csproj" />
+  <Project Path="C1Soft.DataAccess/C1Soft.DataAccess.csproj" />
+  <Project Path="C1Soft.Domain/C1Soft.Domain.csproj" />
+  <Project Path="C1Soft.WebUI/C1Soft.WebUI.csproj" />
+</Solution>
