@@ -175,8 +175,8 @@ Veritabanı oluşturulduğunda otomatik tohumlanacak (seed edilecek) varsayılan
 
 ## BÖLÜM 5: PROJE TESLİMAT KONTROL LİSTESİ (CHECKLIST)
 
-- [ ] **1. Kaynak Kod:** Temiz N-Tier mimari, 0 hata, 0 uyarı.
-- [ ] **2. Veritabanı Oluşturma:** EF Core Migrations + Proje ana dizininde `Database_Script.sql` çıktısı.
+- [x] **1. Kaynak Kod:** Temiz N-Tier mimari, 0 hata, 0 uyarı.
+- [x] **2. Veritabanı Oluşturma:** EF Core Migrations + Proje ana dizininde `Database_Script.sql` çıktısı.
 - [ ] **3. README.md:** Kurulum adımları, Connection String, varsayılan kullanıcılar ve mimari tercihler.
-- [ ] **4. SQL Bilgisi:** İlişkisel tablolar, Foreign Key'ler, Unique kısıtlamalar, gereksiz veri çekmeyen SQL projeksiyonları.
-- [ ] **5. Güvenlik:** PBKDF2 şifre hashleme, Cookie Auth, Rol bazlı yetkilendirme.
+- [x] **4. SQL Bilgisi:** İlişkisel tablolar, Foreign Key'ler, Unique kısıtlamalar, gereksiz veri çekmeyen SQL projeksiyonları.
+- [x] **5. Güvenlik:** PBKDF2 şifre hashleme, Cookie Auth, Rol bazlı yetkilendirme.
