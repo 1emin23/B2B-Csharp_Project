@@ -1,8 +1,116 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model List<C1Soft.Domain.Entities.Banner>
+@{
+    ViewData["Title"] = "B2B Ticaret Portalı";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Kampanya Slider / Banner Carousel (Madde 4.1) -->
+@if (Model != null && Model.Any())
+{
+    <div id="homeBannerCarousel" class="carousel slide shadow-sm rounded-3 overflow-hidden mb-4" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="@i" 
+                        class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"></button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var banner = Model[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")" style="min-height: 280px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                    <div class="container py-5 text-white">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <span class="badge bg-warning text-dark mb-2 px-3 py-1 fw-bold">ÖNE ÇIKAN KAMPANYA</span>
+                                <h2 class="display-6 fw-bold mb-3">@banner.Title</h2>
+                                <p class="lead mb-4 text-white-50">@banner.Subtitle</p>
+                                <a href="@(string.IsNullOrEmpty(banner.RedirectUrl) ? "/Product/Index" : banner.RedirectUrl)" 
+                                   class="btn btn-light btn-lg px-4 fw-bold shadow-sm">
+                                    <i class="bi bi-arrow-right-circle me-2"></i>Kataloğu İncele
+                                </a>
+                            </div>
+                            <div class="col-lg-4 text-center d-none d-lg-block">
+                                <i class="bi bi-box-seam" style="font-size: 8rem; opacity: 0.25;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (Model.Count > 1)
+        {
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Önceki</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Sonraki</span>
+            </button>
+        }
+    </div>
+}
+
+<!-- Hızlı Erişim Kartları -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body text-center">
+                <div class="mb-3 text-primary">
+                    <i class="bi bi-grid-3x3-gap" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bold">Dinamik Ürün Kataloğu</h5>
+                <p class="text-muted small">
+                    SQL seviyesinde hızlı arama, dinamik kolonlar ve kritik stok seviyeleriyle anında ürün bulun.
+                </p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary btn-sm px-3">
+                    Kataloğa Git
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body text-center">
+                <div class="mb-3 text-success">
+                    <i class="bi bi-lightning-charge" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bold">Hızlı Sipariş Girişi</h5>
+                <p class="text-muted small">
+                    Ürün detayına girmeden doğrudan tablo satırından adet girerek saniyeler içinde sepete ekleyin.
+                </p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-success btn-sm px-3">
+                    Hemen Başla
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-3">
+            <div class="card-body text-center">
+                <div class="mb-3 text-warning">
+                    <i class="bi bi-shield-check" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bold">Fiyat Snapshot Güvencesi</h5>
+                <p class="text-muted small">
+                    Sipariş anındaki ürün kodu, adı ve birim fiyatı dondurulur; fiyat değişikliklerinden etkilenmezsiniz.
+                </p>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Order" asp-action="MyOrders" class="btn btn-outline-warning btn-sm px-3">
+                        Siparişlerim
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-warning btn-sm px-3">
+                        Giriş Yap
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 </div>

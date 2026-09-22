@@ -1,0 +1,266 @@
+@model C1Soft.Business.DTOs.Cart.CartDto
+@{
+    ViewData["Title"] = "Alışveriş Sepetim";
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-cart3 text-primary me-2"></i>Alışveriş Sepetim
+        </h2>
+        <p class="text-muted small">
+            Sepetinizdeki ürünleri kontrol edebilir, miktar güncelleyebilir ve siparişinizi onaylayabilirsiniz.
+        </p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!Model.Items.Any())
+{
+    <div class="card border-0 shadow-sm text-center py-5">
+        <div class="card-body">
+            <div class="mb-3 text-muted">
+                <i class="bi bi-cart-x" style="font-size: 4rem;"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Sepetiniz Boş</h4>
+            <p class="text-muted mb-4">Henüz sepetinize bir ürün eklemediniz.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary px-4 py-2">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Ürün Kataloğuna Git
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    @if (Model.HasStockWarnings)
+    {
+        <div class="alert alert-warning d-flex align-items-center mb-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                <strong>Dikkat:</strong> Sepetinizdeki bazı ürünlerin talep edilen adedi mevcut stoğun üzerindedir. Lütfen miktarları düzenleyiniz.
+            </div>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Sepet Tablosu -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 70px;">Görsel</th>
+                                <th>Ürün Bilgisi</th>
+                                <th class="text-end" style="width: 120px;">Birim Fiyat</th>
+                                <th class="text-center" style="width: 150px;">Adet</th>
+                                <th class="text-end" style="width: 130px;">Tutar</th>
+                                <th class="text-center" style="width: 60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr id="cart-row-@item.CartItemId" class="@(item.HasStockWarning ? "table-danger" : "")">
+                                    <td>
+                                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/60x60?text=No+Img" : item.ImageUrl)"
+                                             class="img-thumbnail rounded"
+                                             style="width: 55px; height: 55px; object-fit: contain;"
+                                             alt="@item.ProductName"
+                                             onerror="this.src='https://placehold.co/60x60?text=No+Img';" />
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">@item.ProductName</div>
+                                        <div class="small text-muted">
+                                            Kod: <code class="text-dark fw-bold">@item.ProductCode</code>
+                                            <span class="ms-2">Mevcut Stok: <strong>@item.StockQuantity</strong></span>
+                                        </div>
+                                        @if (item.HasStockWarning)
+                                        {
+                                            <span class="badge bg-danger mt-1">
+                                                <i class="bi bi-exclamation-circle me-1"></i>Stok Yetersiz!
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-end fw-semibold">
+                                        @item.UnitPrice.ToString("N2") ₺
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm justify-content-center">
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    onclick="changeQuantity(@item.CartItemId, @(item.Quantity - 1))">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <input type="number" id="qty-input-@item.CartItemId" 
+                                                   class="form-control text-center" 
+                                                   value="@item.Quantity" min="1" max="@item.StockQuantity"
+                                                   onchange="changeQuantity(@item.CartItemId, this.value)" />
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    onclick="changeQuantity(@item.CartItemId, @(item.Quantity + 1))">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="text-end fw-bold text-primary fs-6" id="line-total-@item.CartItemId">
+                                        @item.LineTotal.ToString("N2") ₺
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="removeItem(@item.CartItemId, '@item.ProductName')" 
+                                                title="Sepetten Çıkar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Alışverişe Devam Et
+                </a>
+
+                <form asp-action="Clear" method="post" onsubmit="return confirm('Sepetinizdeki tüm ürünler silinecek. Onaylıyor musunuz?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash3 me-1"></i>Sepeti Boşalt
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sipariş Özeti Kartı -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-receipt-cutoff me-2"></i>Sipariş Özeti</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Farklı Ürün Çeşidi:</span>
+                        <strong id="summaryItemCount">@Model.Items.Count Kalem</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Toplam Sipariş Adedi:</span>
+                        <strong id="summaryTotalQty">@Model.TotalItemCount Adet</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fs-5 fw-bold text-dark">Genel Toplam:</span>
+                        <span class="fs-4 fw-bold text-primary" id="summaryGrandTotal">@Model.GrandTotal.ToString("N2") ₺</span>
+                    </div>
+
+                    <form asp-controller="Order" asp-action="Checkout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold fs-6 shadow-sm"
+                                @(Model.HasStockWarnings ? "disabled" : "") id="btnCheckout">
+                            <i class="bi bi-check2-circle me-2"></i>Siparişi Onayla
+                        </button>
+                    </form>
+
+                    @if (Model.HasStockWarnings)
+                    {
+                        <div class="text-danger small mt-2 text-center">
+                            * Stok aşımı olan ürünler varken sipariş onaylanamaz.
+                        </div>
+                    }
+
+                    <div class="mt-3 text-muted small text-center">
+                        <i class="bi bi-shield-check text-success me-1"></i>Sipariş anında fiyat snapshot güvencesi
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Sepet kalemi miktarını AJAX ile güncelle
+        function changeQuantity(cartItemId, newQty) {
+            newQty = parseInt(newQty, 10);
+            if (isNaN(newQty) || newQty <= 0) {
+                removeItem(cartItemId, 'Bu ürünü');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('cartItemId', cartItemId);
+            formData.append('quantity', newQty);
+
+            fetch('/Cart/UpdateQuantity', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Sayfayı tazele (stok uyarılarını ve toplamları hatasız hesaplamak için)
+                    window.location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Miktar Güncellenemedi',
+                        text: data.message,
+                        confirmButtonText: 'Tamam'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'Hata', text: 'İşlem gerçekleştirilemedi.' });
+            });
+        }
+
+        // Sepetten ürün sil
+        function removeItem(cartItemId, productName) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: `${productName} sepetinizden silinecek.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData();
+                    formData.append('cartItemId', cartItemId);
+
+                    fetch('/Cart/Remove', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Hata', text: data.message });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

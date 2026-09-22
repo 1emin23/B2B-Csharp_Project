@@ -118,19 +118,13 @@ Aşağıdaki adımlar, case'in doğasına uygun şekilde; gereksiz süslemelerde
     - Bootstrap 5 Detay Popup Modalı (Ürün kodu, marka, üretici kodu, özel kodlar, kategori ve açıklamayı sayfa yenilemeden Fetch ile getirme).
 
 
-### 📌 ADIM 3: AJAX Sepet Yönetimi & Navbar Bildirimi
-- **Yapılacaklar:**
-  - `CartController.cs` oluşturulacak:
-    - `Index()`: Bayinin sepet sayfasını dönecek (`GetCartAsync`).
-    - `[HttpPost] AddToCart(int productId, int quantity)`: AJAX ile çağrılacak. Başarılı/hata durumunu JSON dönecek (`{ success: true, message: "...", cartCount: 3 }`).
-    - `[HttpPost] UpdateQuantity(int cartItemId, int quantity)`: AJAX ile sepet içinden adet artırıp azaltacak.
-    - `[HttpPost] Remove(int cartItemId)`: Kalemi sepetten silecek.
-    - `[HttpGet] GetCartCount()`: Navbar'daki sepet sayısını tazeleyecek.
-  - `Views/Cart/Index.cshtml`:
-    - Sepet tablosu, birim fiyat, adet değiştirme inputları, satır tutarı, sepet genel toplamı ve "Siparişi Onayla" butonu.
-  - `Views/Shared/_Layout.cshtml` düzenlenecek:
-    - Navbar'da dinamik Sepet Rozeti (Badge), Oturum açan kullanıcının adı ve rolü, "Çıkış Yap" butonu.
-    - AJAX yanıtları için SweetAlert2 kütüphanesi entegre edilecek (Sepete eklendiğinde sağ üstte yeşil toast bildirimi).
+### ✅ ADIM 3: AJAX Sepet Yönetimi & Navbar Bildirimi - [TAMAMLANDI]
+- **Yapılanlar:**
+  - `CartController.cs` oluşturuldu (`Index`, `AddToCart`, `UpdateQuantity`, `Remove`, `Clear`, `GetCartCount`).
+  - `Views/Cart/Index.cshtml` geliştirildi (Ürün tablosu, adet artırma/azaltma, stok yetersizlik uyarıları, genel toplam kartı, "Sepeti Boşalt" ve "Siparişi Onayla" aksiyonları).
+  - Sayfa yenilemeden Fetch API + SweetAlert2 toast bildirimleri ve Navbar'daki dinamik sepet rozeti sayacı entegre edildi.
+  - `HomeController.cs` ve `Views/Home/Index.cshtml` güncellenerek veritabanındaki aktif B2B kampanya banner'ları carousel olarak bağlandı (Madde 4.1).
+
 
 ### 📌 ADIM 4: Sipariş Tamamlama & Snapshot Sipariş Geçmişi
 - **Yapılacaklar:**
