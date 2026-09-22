@@ -29,5 +29,10 @@ public class AppDbContext : DbContext
 
         // DataAccess assembly'si içerisindeki tüm Fluent API konfigürasyonlarını otomatik uygula
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+        // Global Query Filters: Pasif ürün ve kullanıcılar tüm sorgulardan otomatik filtrelenir.
+        // Admin tarafında bypass etmek için .IgnoreQueryFilters() kullanılır.
+        modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
+        modelBuilder.Entity<User>().HasQueryFilter(u => u.IsActive);
     }
 }

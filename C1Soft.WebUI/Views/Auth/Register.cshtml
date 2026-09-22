@@ -1,0 +1,90 @@
+@model C1Soft.Business.DTOs.Auth.RegisterDto
+@{
+    ViewData["Title"] = "Yeni Bayi Kaydı";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-person-plus me-2"></i>Yeni Bayi Kayıt Başvurusu</h4>
+                <small class="text-white-50">C1Soft B2B Ağına Katılın</small>
+            </div>
+            <div class="card-body p-4">
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label fw-semibold">Ad</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Adınız" autofocus />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-semibold">Soyad</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Soyadınız" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Username" class="form-label fw-semibold">Kullanıcı Adı</label>
+                            <input asp-for="Username" class="form-control" placeholder="Örn: bayix" />
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold">E-Posta Adresi</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="ad@sirket.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold">Telefon Numarası (İsteğe Bağlı)</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="05XXXXXXXXX" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold">Şifre</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="En az 6 karakter" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">Şifre Tekrarı</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifrenizi tekrar yazın" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        Kayıt Ol ve Bayi Hesabı Oluştur
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">Zaten bir hesabınız var mı?</span>
+                    <a asp-action="Login" class="text-decoration-none fw-semibold">Giriş Yap</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

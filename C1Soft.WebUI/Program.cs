@@ -1,6 +1,11 @@
+using C1Soft.Business.Interfaces;
+using C1Soft.Business.Services;
+using C1Soft.Business.Validators;
 using C1Soft.DataAccess.Context;
 using C1Soft.DataAccess.Security;
 using C1Soft.DataAccess.Seed;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqlOptions.MigrationsAssembly("C1Soft.DataAccess");
     }));
 
+
 // 2. Güvenlik ve Şifreleme Servisi (PBKDF2/SHA256)
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
@@ -30,8 +36,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// 4. MVC Controller ve View Servisleri
+// 4. MVC Controller ve View Servisleri + FluentValidation entegrasyonu
 builder.Services.AddControllersWithViews();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
+
+// 5. Business Layer Servisleri (DI)
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 
