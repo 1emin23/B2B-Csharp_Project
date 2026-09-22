@@ -181,8 +181,8 @@ Uygulama ilk kez ayağa kalktığında otomatik olarak aşağıdaki test hesapla
 | **11** | İlişkisel Veritabanı Tasarımı | ✅ PK, FK, Unique Index kısıtları ve tipleri EF Core Fluent API ile yapılandırıldı. |
 | **12** | SQL Beklentisi & Performans | ✅ Bellekte filtreleme engellendi; doğrudan SQL Server'a `IQueryable` + `EF.Functions.Like` sorguları atılır. |
 | **13** | Validasyon ve Hata Yönetimi | ✅ FluentValidation, model validation ve kullanıcı dostu hata ekranları hazırlandı. |
-| **15** | Teslim Beklentisi | ✅ Kaynak kod, `Database_Script.sql`, detaylı `README.md` ve `TEST_GUIDELINE.md` teslimata hazırlandı. |
+| **15** | Teslim Beklentisi | ✅ Kaynak kod, `Database_Script.sql`, detaylı `README.md` ve `docs/TEST_GUIDELINE.md` teslimata hazırlandı. |
 
 ---
 
-> Uçtan uca test senaryoları ve adım adım tıklama rehberi için kök dizindeki **[TEST_GUIDELINE.md](TEST_GUIDELINE.md)** dosyasını inceleyebilirsiniz.
+> Uçtan uca test senaryoları ve adım adım tıklama rehberi için **[docs/TEST_GUIDELINE.md](docs/TEST_GUIDELINE.md)** dosyasını inceleyebilirsiniz.
