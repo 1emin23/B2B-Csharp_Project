@@ -35,7 +35,9 @@ Proje, kurumsal B2B toptan ticaret dinamiklerine göre tasarlanmış olup iki an
 ### 1.2. Yönetim Paneli (Admin Panel)
 - **Sipariş Yönetimi:** Tüm siparişlerin listelenmesi, detay faturası, sipariş durumunun **Onaylandı** veya **Reddedildi** olarak güncellenmesi ve bayiye iletilecek **Yönetici Açıklama Notu** girilmesi (Madde 3).
 - **Ürün Yönetimi:** Katalogdaki tüm ürünleri filtreleme, yeni ürün ekleme (resim upload, kritik stok eşiği, kategori ve özel kodlar dahil), ürün düzenleme ve ilişkisel bütünlüğü koruyan **Soft-Delete** (pasife alma) mekanizması (Madde 1.1).
+- **Slider / Banner Yönetimi (Ekstra Puan - Madde 4.1):** Ana sayfa carousel alanındaki kampanya slider'larının yönetim panelinden dinamik eklenmesi, görsel yükleme/değiştirme, hedef link ve sıra no belirlenmesi, tek tıkla aktif/pasif yapılması ve silinmesi.
 - **Bayi & Kullanıcı Yönetimi:** Sisteme kayıtlı kullanıcıların listelenmesi, aranması, rol (`Admin`/`Customer`), hesap aktifliği ve güvenli şifre güncellenmesi (Madde 2).
+- **Asilzade & Dark Executive Konsolu (Yönetici Masası):** Admin oturumu açıldığında sayfa tepesinde kurumsal **"👑 YÖNETİCİ KONSOLU"** şeridi, altın sarısı rozetler, yönetim sayfalarında (`/Admin/*`) koyu gece mavisi ve asil altın ERP teması ve Ürün Kataloğunda Admin için "Sepete Ekle" yerine doğrudan satırdan **"Düzenle"** kısayol entegrasyonu.
 
 ---
 
@@ -170,7 +172,7 @@ Uygulama ilk kez ayağa kalktığında otomatik olarak aşağıdaki test hesapla
 | **1.1** | Ürün Yönetimi (Ekleme, Düzenleme, Zorunlu Alanlar) | ✅ `AdminController.Products`, `ProductCreate`, `ProductEdit`. Resim upload, kategori seçimi ve FluentValidation kuralları tamamlandı. |
 | **2** | Kullanıcı Yönetimi & Güvenli Şifre | ✅ `AdminController.Users`, `UserEdit`. Şifreler PBKDF2 / SHA256 Salted Hash motoru ile saklanır. |
 | **3** | Sipariş Yönetimi (Onay/Red, Snapshot Detay) | ✅ `AdminController.Orders`, `OrderDetail`. Sipariş durumu `Approved`/`Rejected` yapılır ve `AdminNote` bayiye iletilir. |
-| **4.1** | Ana Sayfa Kampanya Slider / Banner | ✅ `Banners` tablosu ve `Views/Home/Index.cshtml` Bootstrap Carousel entegrasyonu tamamlandı. |
+| **4.1** | Ana Sayfa Kampanya Slider / Banner Yönetimi | ✅ **Artı/Ekstra Puan:** `AdminController.Banners`, `BannerCreate`, `BannerEdit`, `BannerDelete`. Slider içerikleri yönetim panelinden dinamik eklenir, görsel yüklenir/silinir, sıralanır ve `Home/Index` Bootstrap Carousel ile yayınlanır. |
 | **5** | Kullanıcı Kaydı, Giriş & Yetkilendirme | ✅ `AuthController` (Login/Register/Logout), Cookie Authentication ve Role-Based yetkilendirme uygulandı. |
 | **6** | Ürün Arama & Detay Popup | ✅ Tüm metinsel alanlarda LIKE arama ve Bootstrap Modal Detay Popup'ı Fetch API ile yapıldı. |
 | **6.1** | B2B Dinamik Grid & Kritik Stok Rozetleri | ✅ `GridColumnDefinitions` tablosuna bağlı dinamik tablo render motoru ve ürün bazlı stok rozetleri (`Var`/`Kritik`/`Yok`) tamamlandı. |

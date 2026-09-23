@@ -71,7 +71,7 @@
                         else if (!col.IsVisibleMobile && !col.IsVisibleTablet && col.IsVisibleDesktop) respClass = "d-none d-lg-table-cell";
 
                         <th class="@alignClass @respClass" style="@(!string.IsNullOrEmpty(col.Width) ? $"width: {col.Width};" : "")">
-                            @col.HeaderName
+                            @(User.IsInRole("Admin") && col.RenderType == GridRenderType.QuantityInputWithCart ? "Yönetim" : col.HeaderName)
                         </th>
                     }
                 </tr>
@@ -159,22 +159,32 @@
                                             break;
 
                                         case GridRenderType.QuantityInputWithCart:
-                                            @* Madde 3.2: Doğrudan Tablodan Hızlı Sipariş Girişi *@
-                                            @if (p.StockQuantity > 0)
+                                            @* Madde 3.2: Bayi için Hızlı Sipariş Girişi, Admin için Doğrudan Düzenleme Kısayolu *@
+                                            @if (User.IsInRole("Admin"))
                                             {
-                                                <div class="input-group input-group-sm justify-content-center" style="max-width: 140px; margin: 0 auto;">
-                                                    <input type="number" id="qty-@p.Id" class="form-control text-center" 
-                                                           value="1" min="1" max="@p.StockQuantity" />
-                                                    <button class="btn btn-primary" onclick="quickAddToCart(@p.Id, 'qty-@p.Id')" title="Sepete Ekle">
-                                                        <i class="bi bi-cart-plus"></i> Ekle
-                                                    </button>
-                                                </div>
+                                                <a asp-controller="Admin" asp-action="ProductEdit" asp-route-id="@p.Id" 
+                                                   class="btn btn-warning btn-sm fw-semibold shadow-sm text-dark" title="Ürünü Yönetim Masasında Düzenle">
+                                                    <i class="bi bi-pencil-square me-1"></i>Düzenle
+                                                </a>
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-secondary" disabled>
-                                                    <i class="bi bi-dash-circle me-1"></i>Tükendi
-                                                </button>
+                                                @if (p.StockQuantity > 0)
+                                                {
+                                                    <div class="input-group input-group-sm justify-content-center" style="max-width: 140px; margin: 0 auto;">
+                                                        <input type="number" id="qty-@p.Id" class="form-control text-center" 
+                                                               value="1" min="1" max="@p.StockQuantity" />
+                                                        <button class="btn btn-primary" onclick="quickAddToCart(@p.Id, 'qty-@p.Id')" title="Sepete Ekle">
+                                                            <i class="bi bi-cart-plus"></i> Ekle
+                                                        </button>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-secondary" disabled>
+                                                        <i class="bi bi-dash-circle me-1"></i>Tükendi
+                                                    </button>
+                                                }
                                             }
                                             break;
 

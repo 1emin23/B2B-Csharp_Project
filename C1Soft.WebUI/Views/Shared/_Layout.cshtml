@@ -16,12 +16,48 @@
         .badge-stock-out { background-color: #dc3545; color: #fff; }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+@{
+    var isAdminArea = ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true;
+}
+<body class="d-flex flex-column min-vh-100 @(isAdminArea ? "admin-theme" : "bg-light")">
     <header>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="admin-topbar py-1 px-3 text-white small" style="background: linear-gradient(90deg, #090d16 0%, #0f172a 50%, #1e293b 100%); border-bottom: 2px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">
+                <div class="container d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-warning text-dark fw-bold px-2 py-1 shadow-sm">
+                            <i class="bi bi-shield-shaded me-1"></i>YÖNETİCİ KONSOLU
+                        </span>
+                        <span class="d-none d-md-inline text-light opacity-75 small">
+                            Kurumsal Yönetici Kipi Aktif &bull; Tam Yetkili Denetim
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 small">
+                        <span class="text-warning fw-semibold">
+                            <i class="bi bi-person-fill-gear me-1"></i>@User.Identity?.Name
+                        </span>
+                        <span class="text-white-50">|</span>
+                        <a asp-controller="Admin" asp-action="Orders" class="text-light text-decoration-none opacity-75 admin-quicklink">
+                            <i class="bi bi-receipt me-1"></i>Sipariş Masası
+                        </a>
+                        <a asp-controller="Admin" asp-action="Products" class="text-light text-decoration-none opacity-75 admin-quicklink">
+                            <i class="bi bi-box-seam me-1"></i>Ürün Masası
+                        </a>
+                        <a asp-controller="Admin" asp-action="Banners" class="text-light text-decoration-none opacity-75 admin-quicklink">
+                            <i class="bi bi-images me-1"></i>Sliderlar
+                        </a>
+                        <a asp-controller="Admin" asp-action="Users" class="text-light text-decoration-none opacity-75 admin-quicklink">
+                            <i class="bi bi-people me-1"></i>Bayiler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand text-white" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-boxes text-primary me-1"></i>C1Soft <span class="badge bg-primary">B2B</span>
+                    <i class="bi bi-boxes @(User.IsInRole("Admin") ? "text-warning" : "text-primary") me-1"></i>C1Soft <span class="badge @(User.IsInRole("Admin") ? "bg-warning text-dark" : "bg-primary")">B2B</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
                         aria-controls="navbarMain" aria-expanded="false" aria-label="Menüyü Aç">
@@ -57,6 +93,7 @@
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Orders"><i class="bi bi-receipt me-2"></i>Sipariş Yönetimi</a></li>
                                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Products"><i class="bi bi-box-seam me-2"></i>Ürün Yönetimi</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Banners"><i class="bi bi-images me-2"></i>Slider / Bannerlar</a></li>
                                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Users"><i class="bi bi-people me-2"></i>Bayi & Kullanıcılar</a></li>
                                 </ul>
                             </li>
@@ -80,10 +117,18 @@
                                 <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-person-circle me-2 fs-5"></i>
                                     <span>
-                                        @User.Identity.Name
-                                        <span class="badge @(User.IsInRole("Admin") ? "bg-danger" : "bg-success") ms-1">
-                                            @(User.IsInRole("Admin") ? "Admin" : "Bayi")
-                                        </span>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <span class="badge bg-warning text-dark fw-bold ms-1 shadow-sm">
+                                                <i class="bi bi-shield-fill-check me-1"></i>Admin
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success ms-1">
+                                                <i class="bi bi-building-check me-1"></i>Bayi
+                                            </span>
+                                        }
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end shadow">

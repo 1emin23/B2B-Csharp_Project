@@ -1,3 +1,4 @@
+using C1Soft.Business.DTOs.Banner;
 using C1Soft.Business.DTOs.Product;
 using C1Soft.Business.DTOs.User;
 using C1Soft.Business.Interfaces;
@@ -13,15 +14,18 @@ public class AdminController : Controller
     private readonly IOrderService _orderService;
     private readonly IProductService _productService;
     private readonly IUserService _userService;
+    private readonly IBannerService _bannerService;
 
     public AdminController(
         IOrderService orderService,
         IProductService productService,
-        IUserService userService)
+        IUserService userService,
+        IBannerService bannerService)
     {
         _orderService = orderService;
         _productService = productService;
         _userService = userService;
+        _bannerService = bannerService;
     }
 
     // ── 1. SİPARİŞ YÖNETİMİ ───────────────────────────────────────────────────
@@ -217,5 +221,151 @@ public class AdminController : Controller
             ModelState.AddModelError(string.Empty, ex.Message);
             return View(model);
         }
+    }
+
+    // ── 4. SLIDER / BANNER YÖNETİMİ (Madde 4.1 - Ekstra Puan) ───────────────
+
+    [HttpGet]
+    public async Task<IActionResult> Banners()
+    {
+        var banners = await _bannerService.GetAllBannersAsync();
+        return View(banners);
+    }
+
+    [HttpGet]
+    public IActionResult BannerCreate()
+    {
+        return View(new BannerCreateDto());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BannerCreate(BannerCreateDto model, IFormFile? imageFile)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        try
+        {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "banners");
+                Directory.CreateDirectory(uploadsDir);
+                var fileName = $"{Guid.NewGuid():N}_{Path.GetFileName(imageFile.FileName)}";
+                var filePath = Path.Combine(uploadsDir, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                model.ImageUrl = $"/images/banners/{fileName}";
+            }
+
+            await _bannerService.CreateBannerAsync(model);
+            TempData["SuccessMessage"] = "Yeni slider içeriği başarıyla eklendi.";
+            return RedirectToAction(nameof(Banners));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> BannerEdit(int id)
+    {
+        var banner = await _bannerService.GetBannerForEditAsync(id);
+        if (banner is null)
+            return NotFound("Slider bulunamadı.");
+
+        return View(banner);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BannerEdit(BannerEditDto model, IFormFile? imageFile)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        try
+        {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "banners");
+                Directory.CreateDirectory(uploadsDir);
+                var fileName = $"{Guid.NewGuid():N}_{Path.GetFileName(imageFile.FileName)}";
+                var filePath = Path.Combine(uploadsDir, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                model.NewImageUrl = $"/images/banners/{fileName}";
+
+                // Eski yüklenmiş görsel varsa ve /images/banners/ altındaysa diskten sil
+                if (!string.IsNullOrEmpty(model.ExistingImageUrl) && model.ExistingImageUrl.StartsWith("/images/banners/"))
+                {
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ExistingImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        try { System.IO.File.Delete(oldFilePath); } catch { /* Ignore */ }
+                    }
+                }
+            }
+
+            await _bannerService.UpdateBannerAsync(model);
+            TempData["SuccessMessage"] = "Slider içeriği başarıyla güncellendi.";
+            return RedirectToAction(nameof(Banners));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BannerDelete(int id)
+    {
+        try
+        {
+            var oldImageUrl = await _bannerService.DeleteBannerAsync(id);
+
+            // Eğer silinen banner'ın görseli /images/banners/ altında fiziksel bir dosyaysa diskten temizle
+            if (!string.IsNullOrEmpty(oldImageUrl) && oldImageUrl.StartsWith("/images/banners/"))
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                if (System.IO.File.Exists(filePath))
+                {
+                    try { System.IO.File.Delete(filePath); } catch { /* Ignore */ }
+                }
+            }
+
+            TempData["SuccessMessage"] = "Slider içeriği ve görseli başarıyla silindi.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(nameof(Banners));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BannerToggleStatus(int id)
+    {
+        try
+        {
+            await _bannerService.ToggleBannerStatusAsync(id);
+            TempData["SuccessMessage"] = "Slider aktiflik durumu güncellendi.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(nameof(Banners));
     }
 }

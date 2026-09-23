@@ -128,6 +128,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
+                    <th style="width: 65px;">Görsel</th>
                     <th>Ürün Kodu (Snapshot)</th>
                     <th>Ürün Adı (Snapshot)</th>
                     <th class="text-end">Birim Fiyat</th>
@@ -139,6 +140,13 @@
                 @foreach (var item in Model.Items)
                 {
                     <tr>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/50x50?text=No+Img" : item.ImageUrl)"
+                                 class="img-thumbnail rounded"
+                                 style="width: 45px; height: 45px; object-fit: contain;"
+                                 alt="@item.ProductName"
+                                 onerror="this.src='https://placehold.co/50x50?text=No+Img';" />
+                        </td>
                         <td><code>@item.ProductCode</code></td>
                         <td class="fw-semibold">@item.ProductName</td>
                         <td class="text-end">@item.UnitPrice.ToString("N2") ₺</td>

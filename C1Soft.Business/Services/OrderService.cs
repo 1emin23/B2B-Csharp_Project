@@ -172,7 +172,8 @@ public class OrderService : IOrderService
                     ProductName = oi.ProductName,
                     Quantity = oi.Quantity,
                     UnitPrice = oi.UnitPrice,
-                    TotalPrice = oi.TotalPrice
+                    TotalPrice = oi.TotalPrice,
+                    ImageUrl = oi.Product != null ? oi.Product.ImageUrl : null
                 }).ToList()
             })
             .FirstOrDefaultAsync();

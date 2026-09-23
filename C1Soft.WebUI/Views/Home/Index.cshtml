@@ -31,7 +31,17 @@
                                 </a>
                             </div>
                             <div class="col-lg-4 text-center d-none d-lg-block">
-                                <i class="bi bi-box-seam" style="font-size: 8rem; opacity: 0.25;"></i>
+                                @if (!string.IsNullOrEmpty(banner.ImageUrl))
+                                {
+                                    <img src="@banner.ImageUrl" alt="@banner.Title" class="img-fluid rounded shadow p-1 bg-white bg-opacity-10" 
+                                         style="max-height: 200px; max-width: 100%; object-fit: contain;" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                    <i class="bi bi-box-seam" style="font-size: 8rem; opacity: 0.25; display: none;"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-box-seam" style="font-size: 8rem; opacity: 0.25;"></i>
+                                }
                             </div>
                         </div>
                     </div>

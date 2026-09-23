@@ -136,6 +136,26 @@ Uygulama ilk kez ayağa kalktığında aşağıdaki hesaplar otomatik olarak PBK
 
 ---
 
+### 🟢 SENARYO 11: Yönetim Paneli — Slider / Banner Yönetimi (Madde 4.1 Ekstra Puan)
+1. Admin menüsünden **"Slider / Bannerlar"** (`/Admin/Banners`) sayfasına gidin.
+2. Küçük resim önizlemeleri, gösterim sırası ve aktiflik durumunu inceleyin.
+3. **"Yeni Slider Ekle"** butonuna basarak yeni bir kampanya görseli yükleyin, başlık, alt başlık ve hedef URL vererek kaydedin.
+4. "Aktif/Pasif" butonu ile slider'ın yayından kaldırılıp tekrar açılmasını test edin.
+5. Ana sayfaya (`/Home/Index`) dönerek slider carousel'inde yayınlandığını doğrulayın.
+
+---
+
+### 🟢 SENARYO 12: Admin Asilzade & Dark Executive Konsolu & Hızlı Düzenleme
+1. **Yönetici Konsolu Şeridi:** Admin ile oturum açıldığında sayfanın en üstünde beliren koyu antrasit ve altın sarısı **`👑 YÖNETİCİ KONSOLU`** şeridini ve masalara hızlı geçiş linklerini test edin.
+2. **Katalogda Doğrudan Düzenleme Kısayolu:**
+   - Admin olarak **"Ürün Kataloğu"** (`/Product/Index`) sayfasına gidin.
+   - Admin müşteri olmadığı için "Sepete Ekle" kutusu yerine **"Yönetim"** kolonu altında sarı renkli **"Düzenle"** butonunun geldiğini görün.
+   - Tıklayarak doğrudan `/Admin/ProductEdit/{id}` sayfasına yönlendirildiğinizi doğrulayın.
+3. **Asilzade Dark ERP Tasarımı:**
+   - Yönetim masası sayfalarında (`/Admin/*`) gece siyahı zemin (`#0b0f19`), koyu ERP kartları (`#111827`), altın sarısı kart bordürleri ve tablo başlıkları ile zenginleştirilmiş kurumsal koyu temayı inceleyin.
+
+---
+
 ## 4. TEKNİK MİMARİ VE VERİTABANI ÖZETİ
 
 - **Mimari:** 4 Katmanlı N-Tier (`C1Soft.Domain`, `C1Soft.DataAccess`, `C1Soft.Business`, `C1Soft.WebUI`)
