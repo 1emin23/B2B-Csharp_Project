@@ -14,7 +14,6 @@
 5. [Kurulum ve Çalıştırma Kılavuzu](#5-kurulum-ve-çalıştırma-kılavuzu)
 6. [Veritabanı Entegrasyonu ve Script Bilgisi](#6-veritabanı-entegrasyonu-ve-script-bilgisi)
 7. [Varsayılan Test Hesapları (Seed Data)](#7-varsayılan-test-hesapları-seed-data)
-8. [Case Gereksinimleri Karşılama Matrisi](#8-case-gereksinimleri-karşılama-matrisi)
 
 ---
 
@@ -161,28 +160,6 @@ Uygulama ilk kez ayağa kalktığında otomatik olarak aşağıdaki test hesapla
 | **Bayi / Müşteri (Customer)** | `bayi1` | `Bayi123!` | `bayi1@c1soft.com` | `/Home/Index` (B2B Kataloğu, Hızlı Sipariş, Sepetim, Siparişlerim) |
 
 *(Not: Şifreler veritabanında açık metin tutulmaz; PBKDF2/SHA256 ile tuzlanmış hash olarak saklanır).*
-
----
-
-## 8. CASE GEREKSİNİMLERİ KARŞILAMA MATRİSİ
-
-| Case Maddesi | İstenen Gereksinim | Karşılanma Durumu & Teknik Çözüm |
-| :---: | :--- | :--- |
-| **1.1** | Ürün Yönetimi (Ekleme, Düzenleme, Zorunlu Alanlar) | ✅ `AdminController.Products`, `ProductCreate`, `ProductEdit`. Resim upload, kategori seçimi ve FluentValidation kuralları tamamlandı. |
-| **2** | Kullanıcı Yönetimi & Güvenli Şifre | ✅ `AdminController.Users`, `UserEdit`. Şifreler PBKDF2 / SHA256 Salted Hash motoru ile saklanır. |
-| **3** | Sipariş Yönetimi (Onay/Red, Snapshot Detay) | ✅ `AdminController.Orders`, `OrderDetail`. Sipariş durumu `Approved`/`Rejected` yapılır ve `AdminNote` bayiye iletilir. |
-| **4.1** | Ana Sayfa Kampanya Slider / Banner Yönetimi | ✅ **Artı/Ekstra Puan:** `AdminController.Banners`, `BannerCreate`, `BannerEdit`, `BannerDelete`. Slider içerikleri yönetim panelinden dinamik eklenir, görsel yüklenir/silinir, sıralanır ve `Home/Index` Bootstrap Carousel ile yayınlanır. |
-| **5** | Kullanıcı Kaydı, Giriş & Yetkilendirme | ✅ `AuthController` (Login/Register/Logout), Cookie Authentication ve Role-Based yetkilendirme uygulandı. |
-| **6** | Ürün Arama & Detay Popup | ✅ Tüm metinsel alanlarda LIKE arama ve Bootstrap Modal Detay Popup'ı Fetch API ile yapıldı. |
-| **6.1** | B2B Dinamik Grid & Kritik Stok Rozetleri | ✅ `GridColumnDefinitions` tablosuna bağlı dinamik tablo render motoru ve ürün bazlı stok rozetleri (`Var`/`Kritik`/`Yok`) tamamlandı. |
-| **7** | Sepet İşlemleri (Adet, Silme, Toplam) | ✅ `CartController` AJAX uçları, dinamik Navbar sepet sayacı ve SweetAlert2 toast bildirimleri tamamlandı. |
-| **8** | Çift Stok Kontrolü & Stok Aşım Uyarısı | ✅ Frontend ve backend'de `OrderService` seviyesinde çift kontrol sağlandı; yetersiz stok durumunda anlaşılır uyarı mesajı iletilir. |
-| **9** | Sipariş Oluşturma, Atomik TX & Snapshot | ✅ `BeginTransactionAsync` ile sipariş anındaki ürün adı, kodu ve birim fiyatı donduruldu (Snapshot); stoklar düşürüldü. |
-| **10** | Siparişlerim & Yönetici Durum Yansıması | ✅ `OrderController.MyOrders` ve `Detail`. Admin sipariş durumunu değiştirdiğinde bayinin ekranında anında güncellenir. |
-| **11** | İlişkisel Veritabanı Tasarımı | ✅ PK, FK, Unique Index kısıtları ve tipleri EF Core Fluent API ile yapılandırıldı. |
-| **12** | SQL Beklentisi & Performans | ✅ Bellekte filtreleme engellendi; doğrudan SQL Server'a `IQueryable` + `EF.Functions.Like` sorguları atılır. |
-| **13** | Validasyon ve Hata Yönetimi | ✅ FluentValidation, model validation ve kullanıcı dostu hata ekranları hazırlandı. |
-| **15** | Teslim Beklentisi | ✅ Kaynak kod, `Database_Script.sql`, detaylı `README.md` ve `docs/TEST_GUIDELINE.md` teslimata hazırlandı. |
 
 ---
 
