@@ -145,14 +145,14 @@ Uygulama ilk kez ayağa kalktığında aşağıdaki hesaplar otomatik olarak PBK
 
 ---
 
-### 🟢 SENARYO 12: Admin Asilzade & Dark Executive Konsolu & Hızlı Düzenleme
+### 🟢 SENARYO 12: Admin Yönetici Konsolu & Hızlı Düzenleme Entegrasyonu
 1. **Yönetici Konsolu Şeridi:** Admin ile oturum açıldığında sayfanın en üstünde beliren koyu antrasit ve altın sarısı **`👑 YÖNETİCİ KONSOLU`** şeridini ve masalara hızlı geçiş linklerini test edin.
 2. **Katalogda Doğrudan Düzenleme Kısayolu:**
    - Admin olarak **"Ürün Kataloğu"** (`/Product/Index`) sayfasına gidin.
    - Admin müşteri olmadığı için "Sepete Ekle" kutusu yerine **"Yönetim"** kolonu altında sarı renkli **"Düzenle"** butonunun geldiğini görün.
    - Tıklayarak doğrudan `/Admin/ProductEdit/{id}` sayfasına yönlendirildiğinizi doğrulayın.
-3. **Asilzade Dark ERP Tasarımı:**
-   - Yönetim masası sayfalarında (`/Admin/*`) gece siyahı zemin (`#0b0f19`), koyu ERP kartları (`#111827`), altın sarısı kart bordürleri ve tablo başlıkları ile zenginleştirilmiş kurumsal koyu temayı inceleyin.
+3. **Yönetim Masaları Arayüzü:**
+   - Yönetim masası sayfalarında (`/Admin/*`) ürünlerin ve tabloların ana sayfa ve bayi portalı ile uyumlu ferah, açık zeminli (`bg-light`) ve okunaklı ERP tasarımıyla sunulduğunu inceleyin.
 
 ---
 

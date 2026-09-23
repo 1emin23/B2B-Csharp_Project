@@ -16,10 +16,7 @@
         .badge-stock-out { background-color: #dc3545; color: #fff; }
     </style>
 </head>
-@{
-    var isAdminArea = ViewContext.RouteData.Values["controller"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true;
-}
-<body class="d-flex flex-column min-vh-100 @(isAdminArea ? "admin-theme" : "bg-light")">
+<body class="d-flex flex-column min-vh-100 bg-light">
     <header>
         @if (User.IsInRole("Admin"))
         {

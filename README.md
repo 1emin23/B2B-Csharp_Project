@@ -36,8 +36,7 @@ Proje, kurumsal B2B toptan ticaret dinamiklerine göre tasarlanmış olup iki an
 - **Sipariş Yönetimi:** Tüm siparişlerin listelenmesi, detay faturası, sipariş durumunun **Onaylandı** veya **Reddedildi** olarak güncellenmesi ve bayiye iletilecek **Yönetici Açıklama Notu** girilmesi (Madde 3).
 - **Ürün Yönetimi:** Katalogdaki tüm ürünleri filtreleme, yeni ürün ekleme (resim upload, kritik stok eşiği, kategori ve özel kodlar dahil), ürün düzenleme ve ilişkisel bütünlüğü koruyan **Soft-Delete** (pasife alma) mekanizması (Madde 1.1).
 - **Slider / Banner Yönetimi (Ekstra Puan - Madde 4.1):** Ana sayfa carousel alanındaki kampanya slider'larının yönetim panelinden dinamik eklenmesi, görsel yükleme/değiştirme, hedef link ve sıra no belirlenmesi, tek tıkla aktif/pasif yapılması ve silinmesi.
-- **Bayi & Kullanıcı Yönetimi:** Sisteme kayıtlı kullanıcıların listelenmesi, aranması, rol (`Admin`/`Customer`), hesap aktifliği ve güvenli şifre güncellenmesi (Madde 2).
-- **Asilzade & Dark Executive Konsolu (Yönetici Masası):** Admin oturumu açıldığında sayfa tepesinde kurumsal **"👑 YÖNETİCİ KONSOLU"** şeridi, altın sarısı rozetler, yönetim sayfalarında (`/Admin/*`) koyu gece mavisi ve asil altın ERP teması ve Ürün Kataloğunda Admin için "Sepete Ekle" yerine doğrudan satırdan **"Düzenle"** kısayol entegrasyonu.
+- **Yönetici Konsolu Şeridi & Katalog Yönetim Entegrasyonu:** Admin oturumu açıldığında sayfa tepesinde kurumsal **"👑 YÖNETİCİ KONSOLU"** şeridi, altın sarısı rozetler, yönetim masalarına hızlı erişim bağlantıları ve Ürün Kataloğunda Admin için "Sepete Ekle" yerine doğrudan satırdan **"Düzenle"** kısayol entegrasyonu.
 
 ---
 
