@@ -29,6 +29,7 @@ public class BannerEditDto
     public string? Subtitle { get; set; }
     public string? ExistingImageUrl { get; set; }
     public string? NewImageUrl { get; set; }
+    public bool RemoveExistingImage { get; set; }
     public string? RedirectUrl { get; set; }
     public int OrderIndex { get; set; }
     public bool IsActive { get; set; }

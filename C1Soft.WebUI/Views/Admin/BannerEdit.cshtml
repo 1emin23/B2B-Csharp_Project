@@ -58,7 +58,7 @@
                         
                         @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
                         {
-                            <div class="d-flex align-items-center gap-3 mb-3 p-2 bg-white rounded border">
+                            <div class="d-flex align-items-center gap-3 mb-2 p-2 bg-white rounded border">
                                 <img src="@Model.ExistingImageUrl" alt="Mevcut Görsel" 
                                      class="img-thumbnail rounded shadow-sm" style="max-height: 80px; max-width: 150px; object-fit: cover;"
                                      onerror="this.src='https://placehold.co/150x80?text=No+Img';" />
@@ -66,6 +66,12 @@
                                     <span class="small text-muted d-block">Mevcut Görsel Yolu:</span>
                                     <code class="small text-dark">@Model.ExistingImageUrl</code>
                                 </div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input asp-for="RemoveExistingImage" class="form-check-input" type="checkbox" id="chkRemoveExistingImg" />
+                                <label class="form-check-label text-danger small fw-semibold" for="chkRemoveExistingImg">
+                                    <i class="bi bi-trash3 me-1"></i>Mevcut görseli sil / kaldır (Görselsiz metin banner'ı olarak göster)
+                                </label>
                             </div>
                         }
 

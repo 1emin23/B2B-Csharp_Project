@@ -312,6 +312,19 @@ public class AdminController : Controller
                     }
                 }
             }
+            else if (model.RemoveExistingImage)
+            {
+                // Mevcut görsel kaldırılmak istenmişse diskten sil
+                if (!string.IsNullOrEmpty(model.ExistingImageUrl) && model.ExistingImageUrl.StartsWith("/images/banners/"))
+                {
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.ExistingImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        try { System.IO.File.Delete(oldFilePath); } catch { /* Ignore */ }
+                    }
+                }
+                model.ExistingImageUrl = null;
+            }
 
             await _bannerService.UpdateBannerAsync(model);
             TempData["SuccessMessage"] = "Slider içeriği başarıyla güncellendi.";

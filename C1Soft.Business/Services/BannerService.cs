@@ -83,6 +83,10 @@ public class BannerService : IBannerService
         {
             banner.ImageUrl = dto.NewImageUrl.Trim();
         }
+        else if (dto.RemoveExistingImage)
+        {
+            banner.ImageUrl = string.Empty;
+        }
 
         await _context.SaveChangesAsync();
     }
