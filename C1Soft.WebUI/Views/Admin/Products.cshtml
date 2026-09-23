@@ -69,7 +69,7 @@
                     <th>Kategori</th>
                     <th class="text-center">Stok / Eşik</th>
                     <th class="text-end">Fiyat</th>
-                    <th class="text-center" style="width: 160px;">İşlemler</th>
+                    <th class="text-center" style="width: 190px;">İşlemler</th>
                 </tr>
             </thead>
             <tbody>
@@ -111,16 +111,16 @@
                                 <span class="fw-bold">@p.StockQuantity</span> / <span class="text-muted small">@p.CriticalStockThreshold</span>
                             </td>
                             <td class="text-end fw-bold text-primary">@p.Price.ToString("N2") ₺</td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <a asp-action="ProductEdit" asp-route-id="@p.Id" class="btn btn-outline-primary" title="Düzenle">
-                                        <i class="bi bi-pencil"></i> Düzenle
+                            <td class="text-center text-nowrap">
+                                <div class="d-inline-flex gap-1 align-items-center justify-content-center">
+                                    <a asp-action="ProductEdit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center" title="Düzenle">
+                                        <i class="bi bi-pencil me-1"></i>Düzenle
                                     </a>
-                                    <form asp-action="ProductDelete" asp-route-id="@p.Id" method="post" class="d-inline"
+                                    <form asp-action="ProductDelete" asp-route-id="@p.Id" method="post" class="d-inline m-0"
                                           onsubmit="return confirm('Bu ürünü pasife almak (soft-delete) istediğinizden emin misiniz?');">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger" title="Pasife Al">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center" title="Pasife Al">
+                                            <i class="bi bi-trash me-1"></i>Pasif Yap
                                         </button>
                                     </form>
                                 </div>
